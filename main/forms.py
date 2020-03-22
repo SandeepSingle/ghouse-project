@@ -71,6 +71,16 @@ class Signup(forms.Form):
             }
         )
     )
+    contact_no = forms.CharField(
+        label=_('Contact No'),
+        max_length=15,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': _('Enter contact number'),
+            }
+        )
+    )
     username = forms.CharField(
         label=_("Username"),
         max_length=32,

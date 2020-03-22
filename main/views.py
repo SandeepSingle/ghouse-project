@@ -62,20 +62,19 @@ def signup(request):
         if form.is_valid():
             try:
                 with transaction.atomic():
-                    staffs_group = get_object_or_404(Group, name__iexact="Staffs")
+                    # staffs_group = get_object_or_404(Group, name__iexact="Staffs")
                     form.save()
                     print(staff_id)
                     s = get_object_or_404(Staff, staff_id__exact=staff_id)
                     s.user = get_object_or_404(User, username__iexact=username)
                     s.user.set_password(form.cleaned_data['password1'])
-                    s.user.groups.add(staffs_group)
+                    # s.user.groups.add(staffs_group)
                     s.user.save()
                     s.save()
             except IntegrityError:
                 raise Http404
             return redirect('index')
     else:
-        print("love ")
         form = Signup()
 
     return render(
