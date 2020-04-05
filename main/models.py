@@ -65,6 +65,8 @@ class RoomType(models.Model):
     price = models.PositiveSmallIntegerField()
     facility = models.ManyToManyField('Facility')
     Max_no_of_guest=models.PositiveSmallIntegerField(default=True)
+    No_of_Rooms=models.PositiveSmallIntegerField(default=True)
+
 
     def display_facility(self):
         return ', '.join([facility.name for facility in self.facility.all()])
@@ -72,7 +74,10 @@ class RoomType(models.Model):
     display_facility.short_description = 'Facilities'
 
     def __str__(self):
-        return self.name
+        return "%i - %s - Rs. %i" % (self.No_of_Rooms, self.name, self.price)
+
+    def get_absolute_url(self):
+        return reverse('room_type-detail', args=[self.room_type_id])
 
 class Facility(models.Model):
     name = models.CharField(max_length=25)

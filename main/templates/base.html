@@ -75,6 +75,9 @@
                             <a class="nav-link" href="{% url 'rooms' %}">Rooms</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" href="{% url 'rooms_type_list' %}">Rooms Types</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="{% url 'payment-index' %}">Payments</a>
                         </li>
                     </ul>
@@ -105,7 +108,7 @@
                         {% block login-status %}
                             {% if user.is_authenticated %}
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#">{{ user.first_name }} {{ user.last_name }}</a>
+                                    <a class="nav-link" href="{% url 'profile' %}">{{ user.first_name }} {{ user.last_name }}</a>
                                     <a class="nav-link" href="{% url 'logout' %}?next={{ request.path }}">Logout</a>
                                 </li>
                             {% else %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block main-content %}
+    {% if roomtype_list %}
+        <table class="table table-hover">
+            <thead class="thead-light">
+            <tr>
+                <th>Total Rooms</th>
+                <th>Room Type</th>
+                <th>Room Price</th>
+                <th>Avalable Rooms</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for room in roomtype_list  %}
+                <tr>
+                    <td><a href="{% url 'roomtype-detail' room.No_of_Rooms %}"> {{ room.No_of_Rooms }}</a></td>
+                    <td>{{ room.name }}</td>
+                    <td>{{ room.price }}</td>
+                    <td>{{ avalable_rooms }}</td>
+                    <td></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>There are no rooms.</p>
+    {% endif %}
+{% endblock %}
+

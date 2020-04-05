@@ -121,8 +121,8 @@ USE_TZ = True
 # Redirect to home URL after login (Default redirects to /accounts/profile/)
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
-# For password reset
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
 # For session expire
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 # Static files (CSS, JavaScript, Images)
@@ -132,3 +132,21 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+# # Sending mail
+
+# from .email_info import *
+# EMAIL_BACKEND = EMAIL_BACKEND
+# EMAIL_HOST=EMAIL_HOST
+# EMAIL_PORT=EMAIL_PORT
+# EMAIL_USE_TLS=EMAIL_USE_TLS
+# EMAIL_HOST_USER = EMAIL_HOST_USER
+# EMAIL_HOST_PASSWORD = EMAIL_HOST_PASSWORD
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS= True
+EMAIL_HOST='smtp.gmail.com'
+EMAIL_PORT= 587
+EMAIL_HOST_USER = 'sandeepsingle6366@gmail.com'
+EMAIL_HOST_PASSWORD = 'lodalele'

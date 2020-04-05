@@ -11,10 +11,12 @@ urlpatterns = [
     # href="{% url 'index' %}
     path('', views.index, name='index'),
     path('signup/', views.signup, name='signup'),
-    path('rooms/', views.RoomListView.as_view(), name='rooms'),  # List of Rooms
+    path('rooms/', views.RoomListView.as_view(), name='rooms'),# List of Rooms
+    path('rooms_type/',views.RoomTypeListView.as_view(), name='rooms_type_list'),
     path('reservations/', views.ReservationListView.as_view(), name='reservations'),  # List of Reservations
     # <int:pk> takes the argument sent in urls.
     path('room/<int:pk>', views.RoomDetailView.as_view(), name='room-detail'),  # Detail of each room
+    path('rooms_type/<int:pk>', views.RoomTypeDetailView.as_view(), name='roomtype-detail'),  # Detail of each room
     # Detail of each reservation
     path('reservation/<str:pk>', views.ReservationDetailView.as_view(), name='reservation-detail'),
     path('customer/<str:pk>', views.CustomerDetailView.as_view(), name='customer-detail'),  # Detail of each customer

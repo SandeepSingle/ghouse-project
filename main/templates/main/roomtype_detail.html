@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content-title %}
+    <h1>{{ title }}</h1>
+{% endblock %}
+<!-- TODO Work on FrontEnd -->
+{% block main-content %}
+    <div class="row">
+        <div class="card text-left col-md-6">
+
+            <div class="card-header text-center">
+                <!--xx  Room Photo -->
+                {% load static %}
+                <img src="#" alt="Room" style="width:200px; height=200px;">
+            </div>
+            <div class="card-header bg-info text-white">Room Type     : {{ roomtype_detail.name }} </div>
+            <div class="card-body bg-info text-white">Room Price      : {{ roomtype_detail.price }}</div>
+            <div class="card-body bg-info text-white">Room Facility   : {{ roomtype_detail.facility }}</div>
+            <div class="card-body bg-info text-white">Max_no_of_guest : {{ roomtype_detail.Max_no_of_guest }}</div>
+            <div class="card-body bg-info text-white">No_of_Rooms     : {{ roomtype_detail.No_of_Rooms }}</div>
+        </div>
+{% endblock %}

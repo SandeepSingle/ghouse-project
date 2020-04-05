@@ -120,3 +120,5 @@ class FacilityAdmin(admin.ModelAdmin):
 class RoomTypeAdmin(admin.ModelAdmin):  
     list_display = ('room_type_id','name', 'price')
     filter_horizontal = ('facility',)
+
+

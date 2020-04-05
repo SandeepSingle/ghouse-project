@@ -1,13 +1,10 @@
 from math import ceil
-
 from django.contrib.auth.models import User
 from django.db import models
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
-
 from django.http import HttpRequest
-
 from main.models import Reservation, Room
 
 
@@ -63,5 +60,5 @@ class CheckOut(models.Model):
             self.stay_duration = self.check_out_date_time - self.check_in.check_in_date_time
             calculated_duration = timezone.timedelta(days=ceil(self.stay_duration.total_seconds() / 3600 / 24))
             self.total_amount = calculated_duration.days * self.check_in.initial_amount
-            self.pay_amount = self.total_amount - self.check_in.initial_amount
+            self.pay_amount = self.total_amount 
         super().save(*args, **kwargs)

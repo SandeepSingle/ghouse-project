@@ -12,8 +12,11 @@ from django.utils.translation import ugettext_lazy as _
 from django.views import generic
 
 from .forms import Signup, ReservationForm, CheckInRequestForm
-from .models import Room, Reservation, Customer, Staff  # Import Models
+from .models import Room,RoomType, Reservation, Customer, Staff,RoomType  # Import Models
 
+#for sending mail
+from django.core.mail import send_mail
+from django.conf import settings
 
 def index(request):
     """
@@ -23,8 +26,7 @@ def index(request):
     page_title = _("GuestHouse Management System")  # For page title as well as heading
     total_num_rooms = Room.objects.all().count()
     available_num_rooms = Room.objects.exclude(reservation__isnull=False).count()
-    available_num_rooms_Cat= Room.objects.filter(room_type=2).count()
-    print(available_num_rooms_Cat)
+    # available_num_rooms_Cat= Room.objects.filter(room_type=2).count()
     total_num_reservations = Reservation.objects.all().count()
     total_num_staffs = Staff.objects.all().count()
     total_num_customers = Customer.objects.all().count()
@@ -36,10 +38,6 @@ def index(request):
     return render(
         request,
         'index.html',
-        # context is whatever sent to the template.
-        # the index of the dictionary i.e. title in 'title': page_title
-        # is used as variable in templates
-        # where as the next one is the variable of this function
         {
             'title': page_title,
             'total_num_rooms': total_num_rooms,
@@ -88,14 +86,10 @@ def signup(request):
 @transaction.atomic
 def reserve(request):
     title = "Add Reservation"
-    print("calling reserve")
     reservation = Reservation.objects.none()
     if request.method == 'POST':
         reservation_form = ReservationForm(request.POST)
-        print("method post")
-        print(reservation_form.error_messages)
         if reservation_form.is_valid():
-            print("form valid")
             try:
                 with transaction.atomic():
                     customer = Customer()
@@ -106,10 +100,10 @@ def reserve(request):
                     customer.contact_no=reservation_form.cleaned_data.get('contact_no')
                     customer.address=reservation_form.cleaned_data.get('address')
                     customer.save()
-                    print("customer is saved",customer)
-                    staff1 = request.user
+
                     reservation = Reservation()
-                    staff=Staff.objects.get()
+                    staff1 = request.user
+                    staff=Staff.objects.get(first_name__iexact=staff1)
                     
                     reservation.staff=staff
                     reservation.customer=customer
@@ -125,6 +119,15 @@ def reserve(request):
                     for room in reservation_form.cleaned_data.get('rooms'):
                         room.reservation = reservation
                         room.save()
+                    
+                    #sending mail
+                    subject="Thank you for your Rservation in CURAJ GuestHouse"
+                    message="Welcome to Curaj GuestHouse.We are very happy to see you here./n Your details for Curaj Guest house room reservation is as follow :/n  "
+                    from_email=settings.EMAIL_HOST_USER
+                    print(from_email)
+                    to_email=[customer.email_address,'skmoondkolida@gmail.com',]
+                    print(to_email)
+                    send_mail(subject,message,from_email,to_email,fail_silently=True)
             except IntegrityError:
                 raise Http404
             return render(
@@ -156,6 +159,7 @@ def reserve_success(request):
 # By default template_name = modelName_list || modelName_detail.
 # eg room_list, room_detail
 # @permission_required('main.can_view_staff')
+
 class RoomListView(PermissionRequiredMixin, generic.ListView):
     """
     View for list of rooms.
@@ -280,7 +284,8 @@ class ProfileView(generic.TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.request.user.is_authenticated:
-            staff=Staff.objects.get()
+            staff1 = self.request.user
+            staff=Staff.objects.get(first_name__iexact=staff1)
             context['information'] = staff
             context['user_information'] = self.request.user
         else:
@@ -302,3 +307,47 @@ class GuestListView(PermissionRequiredMixin, generic.ListView):
     title = 'Guest List View'
     context_object_name = 'guest_list'
     extra_context = {'title': title}
+
+
+
+class RoomTypeListView(PermissionRequiredMixin, generic.ListView):
+    """
+    View for list of guests present in hotel.
+    """
+    model = RoomType,Room
+    paginate_by = 5
+    allow_empty = True
+    queryset = RoomType.objects.all().order_by('-price')
+    permission_required = 'main.can_view_room_type'
+    template_name = 'main/roomtype_list.html'
+    title = 'Room Type List View'
+    context_object_name = 'roomtype_list'
+    extra_context = {'title': title}
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        avalable_rooms={}
+        for i in range(RoomType.objects.all().count()+1):
+            avalable_rooms[i]=Room.objects.filter(room_type=i+2).count()
+            context['avalable_rooms'] = avalable_rooms[i]
+        return context
+
+
+
+class RoomTypeDetailView(PermissionRequiredMixin, generic.DetailView):
+    """
+    View for detail of roomtype
+    Implements generic DetailView
+    """
+    # The remaining are same as previous.
+    model = RoomType
+    template_name = 'main/roomtype_detail.html'
+    title = 'Room Type Detail View'
+    context_object_name = 'roomtype_detail'
+    permission_required = 'main.can_view_room_type'
+    extra_context = {'title': title}
+
+    
+
+
