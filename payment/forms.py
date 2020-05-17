@@ -8,3 +8,4 @@ class CheckoutRequestForm(forms.ModelForm):
         model = CheckOut
         fields = ['check_in']
         widgets = {'check_in': forms.HiddenInput()}
+

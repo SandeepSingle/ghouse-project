@@ -49,7 +49,6 @@ def index(request):
         }
     )
 
-
 @transaction.atomic
 def signup(request):
     title = "Signup"
@@ -60,13 +59,14 @@ def signup(request):
         if form.is_valid():
             try:
                 with transaction.atomic():
-                    # staffs_group = get_object_or_404(Group, name__iexact="Staffs")
+                    staffs_group = get_object_or_404(Group, name__iexact="Staffs")
                     form.save()
-                    print(staff_id)
+                    staff_id = form.cleaned_data['staff_id']
+                    username = form.cleaned_data['username']
                     s = get_object_or_404(Staff, staff_id__exact=staff_id)
                     s.user = get_object_or_404(User, username__iexact=username)
                     s.user.set_password(form.cleaned_data['password1'])
-                    # s.user.groups.add(staffs_group)
+                    s.user.groups.add(staffs_group)
                     s.user.save()
                     s.save()
             except IntegrityError:
@@ -80,6 +80,8 @@ def signup(request):
         'signup.html', {
             'form': form, 'title': title},
     )
+
+
 
 
 @permission_required('main.add_reservation', 'login', raise_exception=True)
@@ -136,11 +138,8 @@ def reserve(request):
                     'reservation': reservation,
                 }
             )
-        else:
-            print("Form invalid")
     else:
-       
-        reservation_form = ReservationForm()
+            reservation_form = ReservationForm()
 
     return render(
         request,
@@ -225,7 +224,7 @@ class ReservationListView(PermissionRequiredMixin, generic.ListView, generic.For
     paginate_by = 5
     allow_empty = True
     form_class = CheckInRequestForm
-    success_url = reverse_lazy('check_in-list')
+    # success_url = reverse_lazy('check_in-list')
     permission_required = 'main.can_view_reservation'
     extra_context = {'title': title}
 
@@ -233,7 +232,9 @@ class ReservationListView(PermissionRequiredMixin, generic.ListView, generic.For
     def form_valid(self, form):
         try:
             with transaction.atomic():
+                print(form)
                 checkin = form.save(commit=False)
+                print(checkin)
                 checkin.user = self.request.user
                 checkin.save()
         except IntegrityError:

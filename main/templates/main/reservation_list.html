@@ -15,7 +15,8 @@
                 <th>No of Adults</th>
                 <th>Rooms</th>
                 <th>Reservation Date Time</th>
-                <th>Check In?</th>
+                <th>Check In ?</th>
+                <th>Cancel Reservation?</th>
             </tr>
             </thead>
             <tbody>
@@ -45,10 +46,41 @@
                         <a class="btn btn-secondary"
                            href="{% url 'check_in-detail' reservation.checkin.id %}">Details</a>
                     {% endif %}</td>
+                    
+                    <td>{% if not reservation.checkin %}
+                        <button id="{{ reservation.reservation_id }}" type="button" class="btn btn-primary confirm-checkin"
+                                data-toggle="modal"
+                                data-target="#DeleteReservation">
+                            Cancel 
+                        </button>
+                    {% else %}        
+                    <a class="btn btn-secondary"
+                           href="{% url 'check_in-detail' reservation.checkin.id %}">Details</a>
+                    {% endif %}</td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
+        <div class="modal fade" id="DeleteReservation">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Confirm Cancel Reservation</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <h5>Do you want to confirm cancel Reservation?</h5>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success" form="reservations">
+                            Yes
+                        </button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="modal fade" id="checkInConfirmBox">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">

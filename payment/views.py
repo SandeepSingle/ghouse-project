@@ -8,7 +8,7 @@ from django.views import generic
 
 from main.models import Facility, Reservation, Staff
 from .forms import CheckoutRequestForm
-from .models import CheckIn, CheckOut
+from .models import CheckIn, CheckOut 
 
 
 # Create your views here.
@@ -57,6 +57,40 @@ class CheckInListView(PermissionRequiredMixin, generic.ListView, generic.FormVie
         except IntegrityError:
             raise Http404
         return super().form_valid(form)
+
+
+class CheckInDetailView(PermissionRequiredMixin, generic.DetailView):
+    model = CheckIn
+    permission_required = 'main.can_view_customer'
+    num_facilities = Facility.objects.count()
+    title = "Check-In Detail"
+    if not num_facilities:
+        facilities = Facility.objects.none()
+    else:
+        facilities = Facility.objects.all()
+
+    extra_context = {
+        'facilities': facilities,
+        'num_facilities': num_facilities,
+        'title': title,
+    }
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        checkin = context['checkin']
+        rooms = checkin.rooms
+        staff = Staff.objects.filter(user=checkin.user)
+        if not staff.count():
+            staff = Staff.objects.none()
+        else:
+            staff = Staff.objects.get(user=checkin.user)
+        context['staff'] = staff
+        if rooms:
+            new_rooms = checkin.rooms.split(', ')
+            new_rooms = list(map(int, new_rooms))
+            context['rooms'] = new_rooms
+        return context
+
 
 
 class CheckInDetailView(PermissionRequiredMixin, generic.DetailView):

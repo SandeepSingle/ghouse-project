@@ -32,8 +32,8 @@ class CheckIn(models.Model):
             self.initial_amount = 0
             for room in self.reservation.room_set.all():
                 self.initial_amount += room.room_type.price
-                for facility in room.room_type.facility.all():
-                    self.initial_amount += facility.price
+                # for facility in room.room_type.facility.all():
+                #     self.initial_amount += facility.price
         else:
             reservation = get_object_or_404(CheckIn, id=self.id).reservation
             if self.reservation != reservation:
@@ -41,7 +41,6 @@ class CheckIn(models.Model):
 
         self.last_edited_on = timezone.now()
         super().save(*args, **kwargs)
-
 
 class CheckOut(models.Model):
     check_in = models.OneToOneField(CheckIn, on_delete=models.CASCADE)
